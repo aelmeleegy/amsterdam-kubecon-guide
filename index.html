@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amsterdam Spots for KubeCon 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --text: #1A1A1A;
+    --text-secondary: #6B6B6B;
+    --accent: #E8573A;
+    --accent-light: #FFF0ED;
+    --border: #E8E6E1;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    padding: 3rem 1.5rem 2rem;
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 0.35rem 0.9rem;
+    border-radius: 100px;
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.03em;
+  }
+  .hero p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ---- MAP ---- */
+  .map-wrapper {
+    max-width: 720px;
+    margin: 1.5rem auto;
+    padding: 0 1.5rem;
+  }
+  .map-container {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    aspect-ratio: 16 / 9;
+  }
+  .map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  /* ---- FILTERS ---- */
+  .filters-bar {
+    max-width: 720px;
+    margin: 2rem auto 0.5rem;
+    padding: 0 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filters-bar::-webkit-scrollbar { display: none; }
+
+  .filter-btn {
+    flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .filter-btn:hover {
+    border-color: var(--text);
+    color: var(--text);
+  }
+  .filter-btn.active {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+
+  /* ---- CATEGORY SECTIONS ---- */
+  .content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 4rem;
+  }
+
+  .category {
+    margin-bottom: 2.5rem;
+  }
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .category-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+  .category-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+  }
+  .category-count {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-left: auto;
+  }
+
+  /* ---- CARDS ---- */
+  .spot-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0eeea;
+    transition: opacity 0.2s;
+  }
+  .spot-card:last-child { border-bottom: none; }
+  .spot-info { flex: 1; min-width: 0; }
+
+  .spot-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+  .spot-comment {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .spot-link {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 100px;
+    border: 1px solid var(--accent);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .spot-link:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+  .spot-link svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ---- HIDDEN STATE ---- */
+  .category.hidden { display: none; }
+
+  /* ---- SEARCH ---- */
+  .search-wrapper {
+    max-width: 720px;
+    margin: 1rem auto 0;
+    padding: 0 1.5rem;
+  }
+  .search-box {
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    padding: 0.7rem 1rem 0.7rem 2.6rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%236B6B6B' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='5'/%3E%3Cline x1='12' y1='12' x2='16' y2='16'/%3E%3C/svg%3E") no-repeat 0.85rem center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box::placeholder { color: #aaa; }
+  .search-box:focus { border-color: var(--text); }
+
+  .spot-card.search-hidden { display: none; }
+  .category.empty-search .category-header { opacity: 0.3; }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    text-align: center;
+    padding: 2rem 1.5rem 3rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .category {
+    animation: fadeUp 0.5s ease both;
+  }
+  .category:nth-child(2) { animation-delay: 0.05s; }
+  .category:nth-child(3) { animation-delay: 0.1s; }
+  .category:nth-child(4) { animation-delay: 0.15s; }
+  .category:nth-child(5) { animation-delay: 0.2s; }
+  .category:nth-child(6) { animation-delay: 0.25s; }
+  .category:nth-child(7) { animation-delay: 0.3s; }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 480px) {
+    .hero { padding: 2rem 1.25rem 1.5rem; }
+    .filters-bar { padding: 0 1.25rem; }
+    .content { padding: 1rem 1.25rem 3rem; }
+    .spot-card { flex-direction: column; gap: 0.5rem; }
+    .spot-link { align-self: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+  <span class="hero-badge">KubeCon EU 2025 · Amsterdam</span>
+  <h1>Where to Eat &amp; Drink</h1>
+  <p>A local's guide to the best coffee, food, and bars in Amsterdam — curated for KubeCon attendees.</p>
+</header>
+
+<!-- Map -->
+<div class="map-wrapper">
+  <div class="map-container" id="map-container">
+    <iframe
+      src="https://www.google.com/maps/d/embed?mid=YOUR_MAP_ID&ehbc=2E312F"
+      allowfullscreen
+      loading="lazy"
+      title="Amsterdam spots map">
+    </iframe>
+  </div>
+</div>
+
+<!-- Search -->
+<div class="search-wrapper">
+  <input type="text" class="search-box" id="search" placeholder="Search spots…" autocomplete="off">
+</div>
+
+<!-- Filters -->
+<nav class="filters-bar" id="filters">
+  <button class="filter-btn active" data-cat="all">All</button>
+  <button class="filter-btn" data-cat="coffee">☕ Coffee</button>
+  <button class="filter-btn" data-cat="bakeries">🥐 Bakeries</button>
+  <button class="filter-btn" data-cat="breakfast">🍳 Breakfast</button>
+  <button class="filter-btn" data-cat="lunch">🥪 Lunch</button>
+  <button class="filter-btn" data-cat="dinner">🍽️ Dinner</button>
+  <button class="filter-btn" data-cat="fancy-dinner">✨ Fancy Dinner</button>
+  <button class="filter-btn" data-cat="bars">🍷 Bars</button>
+</nav>
+
+<!-- Spots -->
+<main class="content" id="spots">
+
+  <!-- Coffee -->
+  <section class="category" data-cat="coffee">
+    <div class="category-header">
+      <span class="category-icon">☕</span>
+      <span class="category-name">Coffee</span>
+      <span class="category-count">10 spots</span>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Coffee District — Olympiaplein</div>
+        <div class="spot-comment">Possibly the best coffee in Amsterdam. Will fight anyone on this.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Coffee+District+Olympiaplein+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Grammes</div>
+        <div class="spot-comment">Amazing pain au chocolats.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Grammes+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Clapham Specialty</div>
+        <div class="spot-comment">If the sun's out, sitting outside at Clapham is beautiful.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Clapham+Specialty+Coffee+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Zizo's Coffee</div>
+        <div class="spot-comment">If the sun's out, you'll love hanging out here.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Zizou+Coffee+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Dak</div>
+        <div class="spot-comment">Really high end coffees.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Dak+Coffee+Roasters+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Toki</div>
+        <div class="spot-comment">Up north, but beautiful.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Toki+Coffee+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Ferment</div>
+        <div class="spot-comment">One of the few places open late that combine coffee and wine.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Ferment+Wine+Coffee+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Maracuyá</div>
+        <div class="spot-comment">Possibly the best filter coffee in Amsterdam.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Maracuyá+Coffee+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Ikaria</div>
+        <div class="spot-comment">Awesome Greek bakeries and nice coffee. Most of all, the terrace is a great one.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Ikaria+Food+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">White Label Coffee</div>
+        <div class="spot-comment">Amazing filter coffee, and I've always liked their yoghurt and granola bowl.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/White+Label+Coffee+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+  </section>
+  <section class="category" data-cat="bakeries">
+    <div class="category-header">
+      <span class="category-icon">🥐</span>
+      <span class="category-name">Bakeries</span>
+      <span class="category-count">7 spots</span>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Fort Negen</div>
+        <div class="spot-comment">If you're in Amsterdam on the weekend, they have amazing weekend specials.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Fort+Negen+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Louf</div>
+        <div class="spot-comment">The double-glazed hazelnut croissant — a must have.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Louf+Oud+West+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Levain et le Vin</div>
+        <div class="spot-comment">Awesome bakeries.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Levain+et+le+Vin+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">The Scandinavian Embassy</div>
+        <div class="spot-comment">Great all-rounder but cinnamon buns are specially good.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Scandinavian+Embassy+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Selma's</div>
+        <div class="spot-comment">Probably some of the best bread in the city.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Selma's+Bakery+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Le Fournil de Sébastien</div>
+        <div class="spot-comment">Arguably the best bakery in Amsterdam — but that's a controversial opinion.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Le+Fournil+de+Sébastien+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Bakkerij Wolff</div>
+        <div class="spot-comment">3 branches in Amsterdam, and I can't choose a favorite. Their bread is my personal favorite.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Bakkerij+Wolf+Wolvenstraat+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+  </section>
+
+  <!-- Breakfast -->
+  <section class="category" data-cat="breakfast">
+    <div class="category-header">
+      <span class="category-icon">🍳</span>
+      <span class="category-name">Breakfast</span>
+      <span class="category-count">6 spots</span>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Breadwinner</div>
+        <div class="spot-comment">Literally the best bagels.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Breadwinner+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Benji's</div>
+        <div class="spot-comment">My wife loves their mango falafel sandwich.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Benji's+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Flo's Appetizing</div>
+        <div class="spot-comment">Amazing bagels as well.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Flo's+Appetizing+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Le French Café</div>
+        <div class="spot-comment">Good food, amazing terrace.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Le+French+Café+Admiraal+de+Ruijterweg+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">LOCALS Brunch</div>
+        <div class="spot-comment">Good food, location in De Pijp is quite unique. If you go to their takeaway coffee spot, the barista is a lovely gentleman.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/LOCALS+Brunch+Daniël+Stalpertstraat+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Bakers &amp; Roasters</div>
+        <div class="spot-comment">Gotta get there early to get a seat, but lovely food.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Bakers+and+Roasters+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+  </section>
+
+  <!-- Lunch -->
+  <section class="category" data-cat="lunch">
+    <div class="category-header">
+      <span class="category-icon">🥪</span>
+      <span class="category-name">Lunch</span>
+      <span class="category-count">8 spots</span>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Chef Jozef</div>
+        <div class="spot-comment">Best shawarma in town.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Chef+Juzzev+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Petit Lou</div>
+        <div class="spot-comment">Their steak salad is my go-to, and the sunny outdoors is a great plus.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Petit+Lou+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Goert Boers</div>
+        <div class="spot-comment">Amazing sandwich stand in Ten Katemarkt. The steak sandwich is the favorite.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Boergeert+Ten+Katemarkt+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Benji's (Albert Cuyp)</div>
+        <div class="spot-comment">An Albert Cuyp sandwich stand for awesome and fresh chicken.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Benny's+Chicken+Albert+Cuyp+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Oliver Green</div>
+        <div class="spot-comment">The Chicken Avo sandwich is the winner. Their Berry Smoothie is great too.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Oliver+Green+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Laffa</div>
+        <div class="spot-comment">Great Middle Eastern shawarma and kebab.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/LAFFA+Utrechtsestraat+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Basquets</div>
+        <div class="spot-comment">Their spicy chicken sandwich is amazing.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Café+Baskèts+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Griekse Traiterie Ela</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Griekse+Traiterie+Ela+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+  </section>
+
+  <!-- Dinner -->
+  <section class="category" data-cat="dinner">
+    <div class="category-header">
+      <span class="category-icon">🍽️</span>
+      <span class="category-name">Dinner</span>
+      <span class="category-count">9 spots</span>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Van 't Spit</div>
+        <div class="spot-comment">They have one thing — chicken — but the chicken is the best in Amsterdam.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Van+'t+Spit+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Cannibale Royale</div>
+        <div class="spot-comment">A steak place with a number of branches. Always reliable.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Cannibale+Royale+Handboogstraat+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Vlees &amp; Co</div>
+        <div class="spot-comment">Best steak in Amsterdam (could be controversial) — but it's in Amsterdam Noord.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Vlees+%26+Co+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Magnia Pizza</div>
+        <div class="spot-comment">Skip Nea, it's overrated. Go to Magnia instead.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Mangia+Pizza+Antonio+Cavoto+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">The Pizza Project</div>
+        <div class="spot-comment">Great Napoletana pizza in Amsterdam West.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Pizza+Project+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Selva</div>
+        <div class="spot-comment">Rooftop restaurant &amp; bar very close to the venue.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Selva+Restaurant+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Alfonso's</div>
+        <div class="spot-comment">Great Mexican food.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Alfonso's+Mexican+Grill+Restaurant+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Casa di David</div>
+        <div class="spot-comment">The pastas here are the favorites.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Casa+di+David+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Janana Burger</div>
+        <div class="spot-comment">They sell out easily — so get there early.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Janana+Burger+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+  </section>
+
+  <!-- Fancy Dinner -->
+  <section class="category" data-cat="fancy-dinner">
+    <div class="category-header">
+      <span class="category-icon">✨</span>
+      <span class="category-name">Fancy Dinner</span>
+      <span class="category-count">8 spots</span>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Restaurant Sebastien</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Restaurant+Sebastian+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Night Kitchen</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Night+Kitchen+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Veneur</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Veneur+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">CUE</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/CUE+Bar+Restaurant+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Restaurant Watergang</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Restaurant+Watergang+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">VanOost Restaurant</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/VanOost+Restaurant+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">NIM Amsterdam</div>
+        <div class="spot-comment">Private dining. Must book in advance.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Nim+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Vinkeles</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Vinkeles+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+  </section>
+
+  <!-- Bars -->
+  <section class="category" data-cat="bars">
+    <div class="category-header">
+      <span class="category-icon">🍷</span>
+      <span class="category-name">Bars</span>
+      <span class="category-count">9 spots</span>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Bar Do</div>
+        <div class="spot-comment">This place is always buzzing in the evenings, and if it's sunny, it's got sun all day.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Bar+Dó+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Café de Wetering</div>
+        <div class="spot-comment">An old-timey Dutch "bruin café" (brown bar). Their fireplace is still working.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Café+de+Wetering+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Karavaan</div>
+        <div class="spot-comment">A nice terrace for when the sun shines.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Karavaan+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Brasserie Lolita</div>
+        <div class="spot-comment">Very popular amongst the locals, but a nice place to hang out.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Brasserie+Lolita+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Ceintuur Theater</div>
+        <div class="spot-comment">Lovely and cozy bar/restaurant.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Ceintuur+Theater+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Bar Lempicka</div>
+        <div class="spot-comment">Incredible spot that looks over the Amstel — but you need to work hard to get a seat.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Bar+Lempicka+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Cafe Vita Lente</div>
+        <div class="spot-comment">Amazing wine selection and a lovely atmosphere. It's still new.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Cafe+Vita+Lente+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Bar Bukowski</div>
+        <div class="spot-comment">Renowned amongst Amsterdamers.</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Bar+Bukowski+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+    <div class="spot-card">
+      <div class="spot-info">
+        <div class="spot-name">Bonnie</div>
+      </div>
+      <a class="spot-link" href="https://www.google.com/maps/search/Bonnie+Bar+Amsterdam" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Map
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>Made with care for the KubeCon EU 2025 community in Amsterdam.</p>
+</footer>
+
+<script>
+  // ---- CATEGORY FILTER ----
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const categories = document.querySelectorAll('.category');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.dataset.cat;
+      categories.forEach(section => {
+        if (cat === 'all' || section.dataset.cat === cat) {
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+        }
+      });
+    });
+  });
+
+  // ---- SEARCH ----
+  const searchInput = document.getElementById('search');
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase().trim();
+    categories.forEach(section => {
+      const cards = section.querySelectorAll('.spot-card');
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const name = card.querySelector('.spot-name')?.textContent.toLowerCase() || '';
+        const comment = card.querySelector('.spot-comment')?.textContent.toLowerCase() || '';
+        const match = !q || name.includes(q) || comment.includes(q);
+        card.classList.toggle('search-hidden', !match);
+        if (match) visibleCount++;
+      });
+      section.classList.toggle('empty-search', visibleCount === 0 && q.length > 0);
+    });
+  });
+</script>
+</body>
+</html>
