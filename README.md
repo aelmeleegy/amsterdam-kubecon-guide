@@ -1,4 +1,4 @@
-# Amsterdam Spots for KubeCon EU 2025
+# Amsterdam Spots for KubeCon EU 2026
 
 A local's guide to the best coffee, food, and bars in Amsterdam — curated for KubeCon attendees.
 
